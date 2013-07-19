@@ -40,7 +40,7 @@ def build_render(path):
 
 
 xsl_renders = {
-    'dirs.xsl': build_render(os.path.join('static', 'xsl', 'dir.xsl')),
+    'dirs.xsl': build_render(os.path.join('templates', 'dir.xsl')),
 }
 
 def write_render(root, to_path, page='dirs.xsl'):

@@ -40,9 +40,9 @@ def build_render(path):
 
 
 xsl_renders = {
-    'dirs.xsl': build_render(os.path.join('templates', 'dir.xsl')),
+    'dir.xsl': build_render(os.path.join('templates', 'dir.xsl')),
 }
 
-def write_render(root, to_path, page='dirs.xsl'):
+def write_render(root, to_path, page='dir.xsl'):
      with codecs.open(to_path, 'wb', 'utf-8') as f:
-        f.write(unicode(xsl_renders['dirs.xsl'](root)))
+        f.write(unicode(xsl_renders['dir.xsl'](root)))

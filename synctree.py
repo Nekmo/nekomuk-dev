@@ -9,8 +9,6 @@ from lxml import etree
 from . import filter
 # from render import render, write_render
 from infodevice import InfoDevice
-from filestree import Tree
-
 infodevice = InfoDevice()
 
 if sys.version_info < (3,0):
@@ -70,6 +68,9 @@ class SyncTree(object):
             os.makedirs(dir)
         
     def command_sync(self, args):
+        # Importar solamente si se va a sincronizar
+        from filestree import Tree
+
         mimetypes.init()
         self.filesfilter = filter.Filters(
             self.cfg.findall('globaloptions/filesfilter/*'),

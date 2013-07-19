@@ -88,7 +88,7 @@ class RenderXML(object):
                 for subelement in obj.build_xml(False, path):
                     element.append(subelement)
             else:
-                element.text = str(obj)
+                element.text = str(obj).decode('utf-8')
             return element
         root = etree.Element(self._xml_structure['name'])
         for interface in self.interfaces:

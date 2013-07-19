@@ -38,10 +38,10 @@ def build_render(path):
         xslt_root = etree.XML(f.read())
     return etree.XSLT(xslt_root)
 
-
-xsl_renders = {
-    'dir.xsl': build_render(os.path.join('templates', 'dir.xsl')),
-}
+if os.path.exists('templates/dir.xsl'):
+    xsl_renders = {
+        'dir.xsl': build_render(os.path.join('templates', 'dir.xsl')),
+    }
 
 def write_render(root, to_path, page='dir.xsl'):
      with codecs.open(to_path, 'wb', 'utf-8') as f:

@@ -8,6 +8,10 @@ from lxml import etree
 
 from . import filter
 # from render import render, write_render
+
+# Importar solamente si se va a sincronizar
+from filestree import Tree
+
 from infodevice import InfoDevice
 infodevice = InfoDevice()
 
@@ -68,9 +72,6 @@ class SyncTree(object):
             os.makedirs(dir)
         
     def command_sync(self, args):
-        # Importar solamente si se va a sincronizar
-        from filestree import Tree
-
         mimetypes.init()
         self.filesfilter = filter.Filters(
             self.cfg.findall('globaloptions/filesfilter/*'),

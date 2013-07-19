@@ -1,0 +1,28 @@
+<config>
+  <version>0.2</version>
+  <globaloptions>
+      <filters>
+          <filter type="endswith" for="file">
+            <choice>.mkv</choice>
+            <choice>.mp4</choice>
+            <choice>.avi</choice>
+            <choice>.mov</choice>
+            <choice>.wmv</choice>
+            <choice>.flv</choice>
+            <choice>.rmvb</choice>
+            <choice>.ogv</choice>
+            <choice>.mpeg</choice>
+            <choice>.divxmpg</choice>
+            <choice>.rm</choice>
+            <choice>.vob</choice>
+            <choice>.bsf</choice>
+            <choice>.m2ts</choice>
+            <choice>.m2t</choice>
+            <choice>.ts</choice>
+            <choice>.ogm</choice>
+          </filter>
+      </filters>
+  </globaloptions>
+  <devices>
+  </devices>
+</config>

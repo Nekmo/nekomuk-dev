@@ -3,6 +3,7 @@
 from . import render
 from . import thumb
 import mimetypes
+import shutil
 
 import os
 import re
@@ -93,7 +94,7 @@ class RenderXML(object):
                 for subelement in obj.build_xml(False, path):
                     element.append(subelement)
             else:
-                element.text = str(obj)
+                element.text = unicode(str(obj))
             return element
         root = etree.Element(self._xml_structure['name'])
         for interface in self.interfaces:
@@ -153,6 +154,7 @@ class Dir(Path):
 
     def __init__(self, root, relative_root, name, tree):
         self.dirs = []
+        self._dirs_names = []
         self.files = []
         self.size = 0
         self.sub_size = 0
@@ -165,6 +167,7 @@ class Dir(Path):
         self.root_level = '../' * self.relative_level
         
     def append_dir(self, subdirobj):
+        self._dirs_names
         self.dirs.append(subdirobj)
     
     def append_file(self, subfileobj):
@@ -220,11 +223,15 @@ class Dir(Path):
         return 'folder.svg'
 
     def render(self, path):
-        print(repr(self.size))
         if not self.last_render is None:
             if (int(float(self.last_render.find('mtime').text)) == int(self.mtime) and 
                     int(float(self.last_render.find('size').text)) == int(self.size)):
                 return
+        if not self.last_render is None:
+            # Comprobar si hay directorios que ya no deben existir en el proyecto
+            for dir in os.walk(path).next()[1]:
+                if dir in self._dirs_names: continue
+                shutil.rmtree(os.path.join(path, dir))
         level = '../' * self.relative_level
         root = self.build_xml(path=path)
         stylesheet = "../../%stemplates/dir.xsl" % ('../' * self.relative_level)

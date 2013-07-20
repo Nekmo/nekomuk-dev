@@ -357,12 +357,12 @@ a:visited {
 
 #divExtra01 {
     background: url(../img/panel_border.png) repeat-x;
-    width: 17%;
+    width: 16%;
     height: 50px;
     position: fixed;
     top: 20px;
     right: 0;
-    z-index: 100;
+    z-index: 10;
 }
 
 #divExtra02 {
@@ -379,6 +379,16 @@ a:visited {
     -o-transform: rotate(180deg);
     transform: rotate(180deg);
 
+}
+
+#divExtra03 {
+    background: url(../img/panel_border.png) repeat-x;
+    right: 16%;
+    width: 2px;
+    height: 50px;
+    position: fixed;
+    top: 20px;
+    z-index: 10;
 }
 
 #thumb_wrapper {

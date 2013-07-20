@@ -85,6 +85,16 @@ $(document).ready(function(){
         });
     }
     
+    // Mostrar siempre la información de los archivos
+    // al hacer scroll
+//     $(window).scroll(function() {
+//         clearTimeout($.data(this, "scrollTimer"));
+//         $.data(this, "scrollTimer", setTimeout(function() {
+//             // do something
+//             console.log("Haven't scrolled in 250ms!");
+//         }, 250));
+//     });
+    
     view_list_icons = function(){
         $('#content').removeClass('view_list_details');
         $('#content').addClass('view_list_icons');

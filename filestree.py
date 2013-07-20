@@ -6,7 +6,12 @@ import mimetypes
 
 import os
 import re
+
 import sys
+if sys.version_info < (3,0):
+    reload(sys)
+    sys.setdefaultencoding('utf8')
+
 from kaa import metadata
 import kaa.metadata.video.core
 import kaa.metadata.audio.core
@@ -88,7 +93,7 @@ class RenderXML(object):
                 for subelement in obj.build_xml(False, path):
                     element.append(subelement)
             else:
-                element.text = str(obj).decode('utf-8')
+                element.text = str(obj)
             return element
         root = etree.Element(self._xml_structure['name'])
         for interface in self.interfaces:

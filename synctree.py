@@ -4,6 +4,7 @@ import os
 import sys
 import logging
 import mimetypes
+import csv
 from lxml import etree
 
 from . import filter
@@ -96,6 +97,9 @@ class SyncTree(object):
             html_device_path = os.path.join('devices', device.quote_name)
             if not os.path.exists(html_device_path):
                 os.makedirs(html_device_path)
+            # Se crea la BD CSV
+            csv_file = open(os.path.join(html_device_path, 'data.csv'), 'wb')
+            csv_file = csv.writer(csv_file)
             for dir in device.tree.paths.values():
                 project_dir = os.path.join(html_device_path, dir.relative_root)
                 if not os.path.exists(project_dir):
@@ -104,6 +108,9 @@ class SyncTree(object):
                 if os.path.exists(render_path):
                     dir.last_render = etree.parse(open(render_path)).getroot()
                 dir.render(project_dir)
+                csv_file.writerow([dir.name, 'dir', dir.relative_root])
+                for file in dir.files:
+                    csv_file.writerow([file.name, file.icon, dir.relative_root])
                 # write_render(
                 #     os.path.join(project_dir, 'index.html'), 
                 #     'dir_device.html',

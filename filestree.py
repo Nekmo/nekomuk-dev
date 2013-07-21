@@ -275,7 +275,7 @@ class File(Path):
             self.get_metadata()
         return [
             'size', 'mtime', 'relative_level', 'filetype', 'name', 'metadata',
-            'human_size', 'quote_name', 'icon', 'thumb', 'mtime'
+            'human_size', 'quote_name', 'icon', 'thumb',
         ]
 
     def __repr__(self):

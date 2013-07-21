@@ -41,13 +41,33 @@
                 </script>
                 <script type="text/javascript">
                     <xsl:attribute name="src">
-                        <xsl:value-of select="$root_level"/>../../static/js/main.js
+                        <xsl:value-of select="$root_level"/>../../static/js/jquery.hipster-titles.js
+                    </xsl:attribute>
+                </script>
+                <script type="text/javascript">
+                    <xsl:attribute name="src">
+                        <xsl:value-of select="$root_level"/>../../static/js/moment.min.js
+                    </xsl:attribute>
+                </script>
+                <script type="text/javascript">
+                    <xsl:attribute name="src">
+                        <xsl:value-of select="$root_level"/>../../static/js/moment.es.js
+                    </xsl:attribute>
+                </script>
+                <script type="text/javascript">
+                    <xsl:attribute name="src">
+                        <xsl:value-of select="$root_level"/>../../static/js/dir.js
                     </xsl:attribute>
                 </script>
                 <!--Escrito con Kate en entorno KDE4 bajo un sistema GNU/Linux (Distribución Archlinux) --> 
                 <link type="text/css" rel="stylesheet"> 
                     <xsl:attribute name="href">
-                        <xsl:value-of select="$root_level"/>../../static/css/style.css
+                        <xsl:value-of select="$root_level"/>../../static/css/dir.css
+                    </xsl:attribute>
+                </link>
+                <link type="text/css" rel="stylesheet"> 
+                    <xsl:attribute name="href">
+                        <xsl:value-of select="$root_level"/>../../static/css/jquery.hipster-titles.css
                     </xsl:attribute>
                 </link>
             </head> 
@@ -76,52 +96,79 @@
                 </div>
                 <div id="logo_div"></div>
                 <div id="panel">
-                    <div id="thumb_wrapper">
-                        <div id="frame_thumb">
-                            <div id="thumb">
+                    <div id="video_data" class="hide">
+                        <div id="thumb_wrapper">
+                            <div id="frame_thumb">
+                                <div id="thumb">
+                                </div>
+                                <div class="desc">Sin captura</div>
                             </div>
-                            <div class="desc">Sin captura</div>
+                        </div>
+                        <div class="verbose name_wrapper">
+                            <span class="name"></span>
+                        </div>
+                        <div class="verbose">
+                            <span class="size_text label">Tamaño</span>
+                            <span class="size data"></span>
+                        </div>
+                        <div class="verbose">
+                            <span class="mtime_text label">Modificado</span>
+                            <span class="mtime data"></span>
+                        </div>
+                        <div class="verbose">
+                            <span class="container_text label">Contenedor</span>
+                            <span class="container data"></span>
+                        </div>
+                        <div class="verbose">
+                            <span class="length_text label">Duración</span>
+                            <span class="length data"></span>
+                        </div>
+                        <div class="verbose">
+                            <span class="video_codec_text label">Códec. vídeo</span>
+                            <span class="video_codec data"></span>
+                        </div>
+                        <div class="verbose">
+                            <span class="resolution_text label">Resolución</span>
+                            <span class="resolution data"></span>
+                        </div>
+                        <div class="verbose">
+                            <span class="aspect_text label">Rel. aspecto</span>
+                            <span class="aspect data"></span>
+                        </div>
+                        <div class="verbose">
+                            <span class="fps_text label">FPS</span>
+                            <span class="fps data"></span>
+                        </div>
+                        <div class="verbose">
+                            <span class="audio_codec_text label">Códec. audio</span>
+                            <span class="audio_codec data"></span>
+                        </div>
+                        <div class="verbose">
+                            <span class="samplerate_text label">Ratio audio</span>
+                            <span class="samplerate data"></span>
+                        </div>
+                        <div class="verbose">
+                            <span class="audio_channels_text label">Canales audio</span>
+                            <span class="audio_channels data"></span>
                         </div>
                     </div>
-                    <div class="verbose">
-                        <span class="container_text label">Contenedor</span>
-                        <span class="container data"></span>
-                    </div>
-                    <div class="verbose">
-                        <span class="size_text label">Tamaño</span>
-                        <span class="size data"></span>
-                    </div>
-                    <div class="verbose">
-                        <span class="length_text label">Duración</span>
-                        <span class="length data"></span>
-                    </div>
-                    <div class="verbose">
-                        <span class="video_codec_text label">Códec. vídeo</span>
-                        <span class="video_codec data"></span>
-                    </div>
-                    <div class="verbose">
-                        <span class="resolution_text label">Resolución</span>
-                        <span class="resolution data"></span>
-                    </div>
-                    <div class="verbose">
-                        <span class="aspect_text label">Rel. aspecto</span>
-                        <span class="aspect data"></span>
-                    </div>
-                    <div class="verbose">
-                        <span class="fps_text label">FPS</span>
-                        <span class="fps data"></span>
-                    </div>
-                    <div class="verbose">
-                        <span class="audio_codec_text label">Códec. audio</span>
-                        <span class="audio_codec data"></span>
-                    </div>
-                    <div class="verbose">
-                        <span class="samplerate_text label">Ratio audio</span>
-                        <span class="samplerate data"></span>
-                    </div>
-                    <div class="verbose">
-                        <span class="audio_channels_text label">Canales audio</span>
-                        <span class="audio_channels data"></span>
+                    <div id="dir_data">
+                        <div class="icon"></div>
+                        <div class="verbose name_wrapper">
+                            <span class="name"></span>
+                        </div>
+                        <div class="verbose">
+                            <span class="size_text label">Tamaño</span>
+                            <span class="size data"></span>
+                        </div>
+                        <div class="verbose">
+                            <span class="mean_size_text label">Tam. medio</span>
+                            <span class="mean_size data"></span>
+                        </div>
+                        <div class="verbose">
+                            <span class="mtime_text label">Modificado</span>
+                            <span class="mtime data"></span>
+                        </div>
                     </div>
                 </div>
                 <div id="results">
@@ -144,7 +191,7 @@
                                 Tamaño medio
                             </span>
                         </div>
-                        <div class="filediv dir">
+                        <div class="filediv dir up">
                             <a href="../index.xml">
                                 <img class="icon" alt="[Up]">
                                     <xsl:attribute name="src"><xsl:value-of select="$root_level"/>../../static/icons/go_up.svg</xsl:attribute>
@@ -157,6 +204,28 @@
                             <span class="mean_size">
                                 <xsl:value-of select="human_mean_size" />
                             </span>
+                        </div>
+                        <div class="filediv dir this_dir hide">
+                            <a>
+                                <xsl:attribute name="href">index.xml</xsl:attribute>
+                                <img class="icon" alt="[Dir]">
+                                    <xsl:attribute name="src"><xsl:value-of select="$root_level" />../../static/icons/<xsl:value-of select="icon" /></xsl:attribute>
+                                </img>
+                            </a>
+                            <a>
+                                <xsl:attribute name="href"><xsl:value-of select="quote_name"/>/index.xml</xsl:attribute>
+                                <xsl:value-of select="name" />
+                            </a>
+                            <span class="size">
+                                <xsl:value-of select="human_size" />
+                            </span>
+                            <span class="mean_size">
+                                <xsl:value-of select="human_mean_size" />
+                            </span>
+                            <span class="filetype hide">dir</span>
+                            <span class="name"><xsl:value-of select="name" /></span>
+                            <span class="mtime hide"><xsl:value-of select="mtime" /></span>
+                            <span class="icon hide"><xsl:value-of select="icon" /></span>
                         </div>
                         <!-- {% for subdir in dir.dirs|sort %} -->
                         <xsl:for-each select="dirs/dir">
@@ -178,6 +247,10 @@
                                 <span class="mean_size">
                                     <xsl:value-of select="human_mean_size" />
                                 </span>
+                                <span class="filetype hide">dir</span>
+                                <span class="name hide"><xsl:value-of select="name" /></span>
+                                <span class="mtime hide"><xsl:value-of select="mtime" /></span>
+                                <span class="icon hide"><xsl:value-of select="icon" /></span>
                             </div>
                         </xsl:for-each>
                         <!-- {% endfor %} -->
@@ -189,6 +262,12 @@
                                 </img>
                                 <span class="name">
                                     <xsl:value-of select="name" />
+                                </span>
+                                <span class="filetype hide">
+                                    <xsl:value-of select="filetype" />
+                                </span>
+                                <span class="mtime hide">
+                                    <xsl:value-of select="mtime" />
                                 </span>
                                 <span class="width verbose">
                                     <xsl:value-of select="metadata/videos/video[1]/width" />

@@ -1,4 +1,7 @@
-$(document).ready(function(){    
+$(document).ready(function(){
+    // Poner moment en español
+    moment.lang('es');
+
     String.prototype.startswith = function(str){
         return this.indexOf(str) == 0;
     };
@@ -328,6 +331,11 @@ $(document).ready(function(){
         // Mostrar en el panel la información de un filediv
         var filetype = $(obj).find('.filetype').text();
         $('#panel > *').hide();
+        $('#panel .name').text($(obj).find('.name').text());
+        $('#panel .name').hipstertitle({align: 'center'});
+        $('#panel .mtime').text(
+            moment.unix(parseInt($(obj).find('.mtime').text())).fromNow()
+        );
         if(filetype == 'video'){
             $('#panel #video_data').show();
             if($(obj).find('.thumb').text() == '1'){
@@ -350,13 +358,13 @@ $(document).ready(function(){
             $('#panel .samplerate').text($(obj).find('.samplerate').text());
             $('#panel .audio_channels').text($(obj).find('.audio_channels').text());
             $('#panel .name').text($(obj).find('.name').text());
-            $('#panel .mtime').text($(obj).find('.mtime').text());
         } else if(filetype == 'dir'){
             $('#panel #dir_data').show();
-            $('#panel .mean_size').text($(obj).find('.man_size').text());
+            $('#panel .icon').css({
+                'background-image': 'url("' + complete_url('static/icons/' + $(obj).find('.icon').text()) + '")'
+            });
+            $('#panel .mean_size').text($(obj).find('.mean_size').text());
             $('#panel .size').text($(obj).find('.size').text());
-            $('#panel .mtime').text($(obj).find('.mtime').text());
-            $('#panel .name').text($(obj).find('.name').text());
         }
     }
     
@@ -466,7 +474,6 @@ $(document).ready(function(){
             cache: true,
             async: false,
             success: function(data){
-                console.debug(data);
                 $('#show_license').html(data);
             },
         });

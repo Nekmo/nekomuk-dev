@@ -14,10 +14,26 @@ $(document).ready(function(){
         this[this.length] = val;
     };
 
-    complete_url = function(url){
+    function safe_tags_replace(str) {
+        function replaceTag(tag) {
+            var tagsToReplace = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;'
+            };
+            return tagsToReplace[tag] || tag;
+        }
+        return str.replace(/[&<>]/g, replaceTag);
+    }
+
+    complete_url = function(url, root){
         var new_url =  window.location.href;
         new_url = new_url.split('/').slice(0, -1).join('/') + '/';
-        new_url = new_url + root_level + url;
+        if(root == undefined || root == true){
+            new_url = new_url + root_level + url;
+        } else {
+            new_url = new_url + url;
+        }
         return new_url
     }
 
@@ -60,18 +76,81 @@ $(document).ready(function(){
         }
     }
   
+    IOServer = function(){
+        this.resources = [
+            root_level + 'io.py', root_level + 'io.cgi', root_level + 'io.php'
+        ]
+        this.__init__ = function(){
+            this.resource = null;
+            for(var i = 0; i < this.resources.length; i++){
+                is_available = false;
+                resource = this.resources[i];
+                $.ajax(resource + '?method=ping', {
+                    async: false
+                }).done(function(data){
+                    if(data != 'PONG'){ return }
+                    is_available = true;
+                });
+                if(is_available){
+                    this.resource = resource;
+                    break
+                }
+            }
+        }
+
+        this.request = function(method, get, post){
+            if(!get){
+                get = {}
+            }
+            get['method'] = method;
+            if(post){
+                var type = 'POST';
+            } else {
+                var type = 'GET';
+            }
+            var return_data = null;
+            $.ajax(this.resource + '?' + $.param(get), {
+                type: type,
+                data: post,
+                async: false,
+                dataType: 'json'
+            }).done(function(data){
+                return_data = data;
+            })
+            return return_data;
+        }
+
+        this.search = function(query){
+            return this.request('search', {query: query});
+        }
+
+
+        this.__init__()
+    }
+    ioserver = new IOServer();
+
+
 
     // En los inputs y textareas, mostrar el texto de
     // ayuda solo si el campo está vacio
     $('input, textarea').live('focusin', function(){
         if($(this).attr('title')==$(this).val()){
             $(this).val('');
+            $(this).parent().append(
+                $('<div class="del" onClick="erase_input(this);"></div>')
+            );
         }
     }).live('focusout', function(){
         if($(this).val()==''){
             $(this).val($(this).attr('title'));
+            $(this).parent().find('.del').remove();
         }
     });
+
+    erase_input = function(elem){
+        $(elem).parent().find('input, textarea').val('');
+        $(elem).parent().find('input, textarea').focusout()
+    }
     
     // Función para mostrar el texto de ayuda en todos
     // los inputs y textareas del documento
@@ -101,13 +180,11 @@ $(document).ready(function(){
     view_list_icons = function(){
         $('#content').removeClass('view_list_details');
         $('#content').addClass('view_list_icons');
-        $('#columns_info').hide();
     }
     
     view_list_details = function(){
         $('#content').removeClass('view_list_icons');
         $('#content').addClass('view_list_details');
-        $('#columns_info').show();
     }
     
     $('#view .icons').click(function(){
@@ -155,16 +232,16 @@ $(document).ready(function(){
             var files = $('<div />').html(data).find('#content .files').html();
             var levels = window.location['pathname'].split('/').length
             if(levels > last_levels){
-                $('#content .files').css({'position': 'relative', 'left': '100%'});
+                $('#content .files').css({'position': 'relative', 'left': '2000px'});
                 $('#content .files').stop().slideTo({ 
-                    transition:500,
+                    transition:800,
                     left: '0',
                     inside:'#content'
                 });
             } else {
-                $('#content .files').css({'position': 'relative', 'left': '-100%'});
+                $('#content .files').css({'position': 'relative', 'left': '-2000px'});
                 $('#content .files').stop().slideTo({ 
-                    transition:500,
+                    transition:800,
                     left: '0',
                     inside:'#content'
                 });
@@ -188,135 +265,220 @@ $(document).ready(function(){
         }
     }
 
-    function device_search(q_parts, results, device){
-        $.each(q_parts, function(i, word){
-            var terms_url = $('#sub_root').text()
-            terms_url = terms_url + 's/' + device
-            terms_url = terms_url + '/' + word.substr(0, 3) + '.json'
-            $.ajax(terms_url, {
-                cache: true,
-                dataType: 'json',
-                async: false,
-                success: function(data) {
-                    $.each(data, function(term, terms){
-                        $.each(terms, function(j, val){
-                            if(term.toLowerCase().startswith(word)){
-                                // se contiene la palabra, se comprueba si el resto
-                                // de términos concuerdan.
-                                if(search_lock){
-                                    results = new Array()
-                                    return
-                                }
-                                var all_in_query = true; // Todas las palabras de las búsqueda pertenecen al término
-                                $.each(q_parts, function(i, q_part){
-                                    // Se mira si cada una de las palabras del término de búsqueda están en el término donde se busca.
-                                    var is_in_term = false;
-                                    $.each(val[0], function(i, in_term){
-                                        if(in_term.startswith(q_part)){
-                                            is_in_term = true;
-                                        }
-                                    });
-                                    if(!is_in_term){
-                                        all_in_query = false;
-                                    }
-                                });
-                                if(all_in_query){
-                                    // Término bueno
-                                    val[3] = decodeURIComponent(decodeURIComponent(device)) + ':' + decodeURIComponent(decodeURIComponent(val[1]));
-                                    val[1] = $('#sub_root').text() + 'devices/' + device + '/' + val[1]
-                                    results.append(val);
-                                }
-                            }
-                        });
-                    });
-                },
-            });
-        });
-    }
-
-    search_lock = false
-    $('#search input').keydown(function(){
-        setTimeout(function(){
-            if($('[name="advance"]:checked').val() == '1'){
-                // Búsqueda sólo aquí
-                $('#content').show();
-                $('#results').hide();
-                var pattern = new RegExp($('#search input').val(), 'i')
-                $.each($('#content .files > div'), function(){
-                    if(pattern.exec($(this).find('.name').text())){
-                        $(this).show();
-                    } else {
-                        $(this).hide();
-                    }
-                });
-                return
+    var last_search_t = 0;
+    // Cuadro de búsqueda
+    reload_search = function(){
+        if(isLoading){ return }
+        var q = $('#search input').val();
+        if (q.length >= 3) {
+            isLoading = true;
+            // ajax fetch the data
+            if($('#results').is('.hide')){
+                $('#panel').animate({right: '-16%'}, 500);
+                $('#content').fadeOut(300);
+                setTimeout(function(){
+                    $('#results').fadeIn(300);
+                }, 300);
             }
-            $()
-            // Búsqueda en dispositivos o en el dispositivo
-            if($('#search input').val().length == 0){
-                $('#results').hide();
-                $('#content').show();
-                $('#content .file, #content .dir').show();
-            }
-            if($('#search input').val().length < 3){
-                return;
-            }
-            $('#content').hide();
-            $('#results').show();
-            search_lock = true
-            sleep(50)
-            search_lock = false
-            var q = $('#search input').val().toLowerCase();
-            var q_parts = q.split(' ')
-            var results = new Array()
-            
-            if($('[name="advance"]:checked').val() == '2'){
-                // Sólo en este dispositivo
-                var devices = [encodeURIComponent($('#device').text())]
-            } else {
-                // En todos los dispositivos
-                var devices = []
-                var devices_url = $('#sub_root').text()
-                devices_url = devices_url + 'index.html'
-                $.ajax(devices_url, {
-                    cache: true,
-                    dataType: 'html',
-                    async: false,
-                    success: function(data){
-                        data = data.replace(/<script/g, '<scr_ipt');
-                        data = data.replace(/<\/script>/g, '</scr_ipt>');
-                        data = $('<div />').html(data).find('#content li');
-                        $.each(data, function(i, device){
-                            devices[devices.length] = encodeURIComponent(encodeURIComponent($(device).text()));
-                        });
-                    }
-                });
-            }
-            $.each(devices, function(i, device){
-                device_search(q_parts, results, device)
-            });
-            $('#results * *').remove();
-            results.sort();
-            $.each(results, function(i, file_data){
-                if(file_data[3]=='dir'){
-                    var pattern = $('#pattern .dir').clone();
-                    $(pattern).find('.name').attr('href', file_data[1] + file_data[2]);
-                    $(pattern).find('.name').text(file_data[2]);
-                    $('#results .dirs').append(pattern);
-
+            $('#results .files').html('');
+            var results = ioserver.search(q);
+            var files = results['files'];
+            var strong_q = $('<strong></strong>');
+            $(strong_q).text(q);
+            strong_q = $('<div>').append(strong_q).html();
+            for(var i = 0; i < files.length; i++){
+                result_obj = $('#pattern .result').clone();
+                $(result_obj).attr('style',
+                    'background-image: url("' + root_level + 'static/icons/' + files[i][1] + '");'
+                )
+                $(result_obj).find('.device span').text(unescape(files[i][3]));
+                $(result_obj).find('.device').attr('href',
+                    complete_url('devices/' + escape(files[i][3])) + '/index.xml'
+                );
+                var path = files[i][2];
+                if(files[i][2]){ path = path + '/'; }
+                $(result_obj).find('.path span').text(path);
+                $(result_obj).find('.path').attr('href',
+                    complete_url('devices/' + escape(files[i][3]) + '/' + files[i][2]) + '/index.xml'
+                );
+                var name = safe_tags_replace(files[i][0]);
+                name = name.replace(q, strong_q);
+                $(result_obj).find('.name span').html(name);
+                if(files[i][1] == 'folder.svg'){
+                    var url_name = complete_url(
+                        'devices/' + escape(files[i][3]) + '/' + files[i][2] + '/' + files[i][0] + '/index.xml'
+                    )
                 } else {
-                    var pattern = $('#pattern .file').clone();
-                    $(pattern).find('.name').text(file_data[2]);
-                    $(pattern).attr('title', file_data[3])
-                    $('#results .files').append(pattern);
+                    var url_name = complete_url(
+                        'devices/' + escape(files[i][3]) + '/' + files[i][2] + '/index.xml'
+                    )
                 }
-            });
-        }, 50);
+                $(result_obj).find('.name').attr('href', url_name);
+                $('#results .files').append(result_obj);
+            }
+        }
+        // enforce the search_delay
+        setTimeout(function(){
+            isLoading=false;
+            if(isDirty){
+                isDirty = false;
+                reload_search();
+            }
+        }, search_delay);
+    }
+    var search_delay = 500;
+    var isLoading = false;
+    var isDirty = false;
+
+    $('#search input').keyup(function(){
+        reload_search();
     });
 
-    $('#content .files a').live('click', function() {
+    $('#search input').bind('focusout', function(elem){
+        if ($(this).val() != '' && $(this).val() != $(this).attr('title')){
+            return
+        }
+        $('#panel').animate({right: '0px'}, 500);
+        $('#results').fadeOut(300);
+        setTimeout(function(){
+            $('#content').fadeIn(300);
+        }, 300);
+    })
+
+    // function device_search(q_parts, results, device){
+    //     $.each(q_parts, function(i, word){
+    //         var terms_url = $('#sub_root').text()
+    //         terms_url = terms_url + 's/' + device
+    //         terms_url = terms_url + '/' + word.substr(0, 3) + '.json'
+    //         $.ajax(terms_url, {
+    //             cache: true,
+    //             dataType: 'json',
+    //             async: false,
+    //             success: function(data) {
+    //                 $.each(data, function(term, terms){
+    //                     $.each(terms, function(j, val){
+    //                         if(term.toLowerCase().startswith(word)){
+    //                             // se contiene la palabra, se comprueba si el resto
+    //                             // de términos concuerdan.
+    //                             if(search_lock){
+    //                                 results = new Array()
+    //                                 return
+    //                             }
+    //                             var all_in_query = true; // Todas las palabras de las búsqueda pertenecen al término
+    //                             $.each(q_parts, function(i, q_part){
+    //                                 // Se mira si cada una de las palabras del término de búsqueda están en el término donde se busca.
+    //                                 var is_in_term = false;
+    //                                 $.each(val[0], function(i, in_term){
+    //                                     if(in_term.startswith(q_part)){
+    //                                         is_in_term = true;
+    //                                     }
+    //                                 });
+    //                                 if(!is_in_term){
+    //                                     all_in_query = false;
+    //                                 }
+    //                             });
+    //                             if(all_in_query){
+    //                                 // Término bueno
+    //                                 val[3] = decodeURIComponent(decodeURIComponent(device)) + ':' + decodeURIComponent(decodeURIComponent(val[1]));
+    //                                 val[1] = $('#sub_root').text() + 'devices/' + device + '/' + val[1]
+    //                                 results.append(val);
+    //                             }
+    //                         }
+    //                     });
+    //                 });
+    //             },
+    //         });
+    //     });
+    // }
+
+    // search_lock = false
+    // $('#search input').keydown(function(){
+    //     setTimeout(function(){
+    //         if($('[name="advance"]:checked').val() == '1'){
+    //             // Búsqueda sólo aquí
+    //             $('#content').show();
+    //             $('#results').hide();
+    //             var pattern = new RegExp($('#search input').val(), 'i')
+    //             $.each($('#content .files > div'), function(){
+    //                 if(pattern.exec($(this).find('.name').text())){
+    //                     $(this).show();
+    //                 } else {
+    //                     $(this).hide();
+    //                 }
+    //             });
+    //             return
+    //         }
+    //         $()
+    //         // Búsqueda en dispositivos o en el dispositivo
+    //         if($('#search input').val().length == 0){
+    //             $('#results').hide();
+    //             $('#content').show();
+    //             $('#content .file, #content .dir').show();
+    //         }
+    //         if($('#search input').val().length < 3){
+    //             return;
+    //         }
+    //         $('#content').hide();
+    //         $('#results').show();
+    //         search_lock = true
+    //         sleep(50)
+    //         search_lock = false
+    //         var q = $('#search input').val().toLowerCase();
+    //         var q_parts = q.split(' ')
+    //         var results = new Array()
+            
+    //         if($('[name="advance"]:checked').val() == '2'){
+    //             // Sólo en este dispositivo
+    //             var devices = [encodeURIComponent($('#device').text())]
+    //         } else {
+    //             // En todos los dispositivos
+    //             var devices = []
+    //             var devices_url = $('#sub_root').text()
+    //             devices_url = devices_url + 'index.html'
+    //             $.ajax(devices_url, {
+    //                 cache: true,
+    //                 dataType: 'html',
+    //                 async: false,
+    //                 success: function(data){
+    //                     data = data.replace(/<script/g, '<scr_ipt');
+    //                     data = data.replace(/<\/script>/g, '</scr_ipt>');
+    //                     data = $('<div />').html(data).find('#content li');
+    //                     $.each(data, function(i, device){
+    //                         devices[devices.length] = encodeURIComponent(encodeURIComponent($(device).text()));
+    //                     });
+    //                 }
+    //             });
+    //         }
+    //         $.each(devices, function(i, device){
+    //             device_search(q_parts, results, device)
+    //         });
+    //         $('#results * *').remove();
+    //         results.sort();
+    //         $.each(results, function(i, file_data){
+    //             if(file_data[3]=='dir'){
+    //                 var pattern = $('#pattern .dir').clone();
+    //                 $(pattern).find('.name').attr('href', file_data[1] + file_data[2]);
+    //                 $(pattern).find('.name').text(file_data[2]);
+    //                 $('#results .dirs').append(pattern);
+
+    //             } else {
+    //                 var pattern = $('#pattern .file').clone();
+    //                 $(pattern).find('.name').text(file_data[2]);
+    //                 $(pattern).attr('title', file_data[3])
+    //                 $('#results .files').append(pattern);
+    //             }
+    //         });
+    //     }, 50);
+    // });
+
+    $('#content .files a, #results a, #path a').live('click', function() {
         if(window.location.hash.startswith('#!')){ return true }
-        $('#panel .data').text('')
+        if($('#results').is(':visible')){
+            $('#search input').focusin();
+            $('#search input').val('');
+            $('#search input').focusout();
+        }
+        $('#panel .data').text('');
         $('#panel #thumb').attr('style', '');
         ajax_load($(this).attr('href'));
         return false 
@@ -340,7 +502,7 @@ $(document).ready(function(){
             $('#panel #video_data').show();
             if($(obj).find('.thumb').text() == '1'){
                 $('#panel #thumb').css({
-                    'background-image': 'url("' + $(obj).find('.name').text() + '.jpg")',
+                    'background-image': 'url("' + complete_url($(obj).find('.name').text(), false) + '.jpg")',
                     'border': '1px solid #292929'
                 });
             } else {

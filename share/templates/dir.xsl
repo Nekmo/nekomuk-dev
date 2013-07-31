@@ -80,11 +80,17 @@
                     <div class="dir">
                         <a class="name" href=""></a>
                     </div>
+                    <div class="result">
+                        <a href="" class="device"><span></span><div class="divExtra"></div></a>
+                        <span class="arrow first">➤</span>
+                        <a href="" class="path"><span></span></a>
+                        <a href="" class="name"><span></span></a>
+                    </div>
                 </div>
                 <div id="top">
                     <div id="subtop">
                         <div id="search">
-                            <input type="text" title="¿Qué desea buscar hoy?" />
+                            <input type="text" title="Comenzar búsqueda" />
                         </div>
                         <div>
                         </div>
@@ -92,6 +98,25 @@
                     <div id="view">
                         <span class="icons" title="Modo de Vista de iconos"></span>
                         <span class="details" title="Modo de vista detallada"></span>
+                    </div>
+                    <div id="path">
+                        <a class="device">
+                            <xsl:attribute name="href"><xsl:value-of select="$root_level" />../../devices/<xsl:value-of select="quote_device" />/index.xml</xsl:attribute>
+                            <span><xsl:value-of select="device_name" /></span>
+                            <div class="divExtra"></div>
+                        </a>
+                        <span class="arrow first">➤</span>
+                        <xsl:for-each select="path_dirs/dirname">
+                            <xsl:variable name="position" select="position()" />
+                            <a>
+                                <xsl:attribute name="href">
+                                    <xsl:value-of select="$root_level" /><xsl:call-template name="loop">
+                                        <xsl:with-param name="var">1</xsl:with-param>
+                                        <xsl:with-param name="position"><xsl:value-of select="$position" /></xsl:with-param>
+                                    </xsl:call-template><xsl:value-of select="." />/index.xml</xsl:attribute>
+                                <span><xsl:if test="$position != 1"><span class="arrow">➤</span></xsl:if><xsl:value-of select="." /></span>
+                            </a>
+                        </xsl:for-each>
                     </div>
                 </div>
                 <div id="logo_div"></div>
@@ -129,7 +154,8 @@
                         </div>
                         <div class="verbose">
                             <span class="resolution_text label">Resolución</span>
-                            <span class="resolution data"></span>
+                            <span class="resolution 
+                                data"></span>
                         </div>
                         <div class="verbose">
                             <span class="aspect_text label">Rel. aspecto</span>
@@ -171,16 +197,21 @@
                         </div>
                     </div>
                 </div>
-                <div id="results">
-                    <div class="dirs">
-                    </div>
-                    <div class="files">
-                    </div>
-                </div>
                 <div id="info_column_background">.</div>
+                <div id="results" class="hide">
+                    <div class="info_column">
+                        <span class="device">
+                            Dispositivo
+                        </span>
+                        <span class="path">
+                            Ruta
+                        </span>
+                    </div>
+                    <div class="files"></div>
+                </div>
                 <div id="content" class="view_list_details">
                     <div class="files">
-                        <div id="info_column">
+                        <div class="info_column">
                             <span class="name">
                                 Nombre
                             </span>
@@ -197,7 +228,7 @@
                                     <xsl:attribute name="src"><xsl:value-of select="$root_level"/>../../static/icons/go_up.svg</xsl:attribute>
                                 </img>
                             </a>
-                            <a href="../index.xml">..</a>
+                            <a href="../index.xml">Directorio superior</a>
                             <span class="size">
                                 <xsl:value-of select="human_size" />
                             </span>
@@ -232,7 +263,7 @@
                             <xsl:sort select="name" /> 
                             <div class="filediv dir">
                                 <a>
-                                    <xsl:attribute name="href"><xsl:value-of select="url"/>/index.xml</xsl:attribute>
+                                    <xsl:attribute name="href"><xsl:value-of select="quote_name"/>/index.xml</xsl:attribute>
                                     <img class="icon" alt="[Dir]">
                                         <xsl:attribute name="src"><xsl:value-of select="$root_level" />../../static/icons/<xsl:value-of select="icon" /></xsl:attribute>
                                     </img>
@@ -319,6 +350,7 @@
                                 <span class="size">
                                     <xsl:value-of select="human_size" />
                                 </span>
+                                <div class="divExtra"></div>
                             </div>
                         <!-- {% endfor %} -->
                         </xsl:for-each>
@@ -337,5 +369,19 @@
                 <div id="divExtra10"></div>
             </body> 
         </html>
+    </xsl:template>
+    <xsl:template name="loop">
+      <xsl:param name="var"></xsl:param>
+      <xsl:param name="position"></xsl:param>
+      <xsl:choose>
+        <xsl:when test="$var &lt; $position">
+          <xsl:value-of select="//path_dirs/dirname[$position]"/><xsl:text>/</xsl:text>
+          <xsl:call-template name="loop">
+            <xsl:with-param name="var">
+            <xsl:number value="number($var)+1" />
+            </xsl:with-param>
+          </xsl:call-template>
+        </xsl:when>
+      </xsl:choose>
     </xsl:template>
 </xsl:stylesheet>

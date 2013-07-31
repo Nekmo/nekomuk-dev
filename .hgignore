@@ -4,3 +4,4 @@ syntax: glob
 *.pyc
 *~
 *kate-swp
+tests/testdir/*mkv

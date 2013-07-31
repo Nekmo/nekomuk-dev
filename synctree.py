@@ -8,6 +8,7 @@ import csv
 from lxml import etree
 
 from . import filter
+from . import db
 # from render import render, write_render
 
 # Importar solamente si se va a sincronizar
@@ -86,6 +87,7 @@ class SyncTree(object):
             mimetypes.add_type(mimetype.attrib['type'], mimetype.attrib['ext'])
         self.make_dirs()
         devices = []
+        sql = db.SQL()
         for device in self.cfg.findall('devices/device'):
             devices.append(Device(device, self))
         for device in devices:
@@ -100,6 +102,8 @@ class SyncTree(object):
             # Se crea la BD CSV
             csv_file = open(os.path.join(html_device_path, 'data.csv'), 'wb')
             csv_file = csv.writer(csv_file)
+            # Se purga la BD SQL para evitar entradas repetidas
+            sql.purge_device(device.quote_name)
             for dir in device.tree.paths.values():
                 project_dir = os.path.join(html_device_path, dir.relative_root)
                 if not os.path.exists(project_dir):
@@ -109,6 +113,8 @@ class SyncTree(object):
                     dir.last_render = etree.parse(open(render_path)).getroot()
                 dir.render(project_dir)
                 csv_file.writerow([dir.name, 'dir', dir.relative_root])
+                sql.add_file(dir)
+                sql.add_file(dir.files)
                 for file in dir.files:
                     csv_file.writerow([file.name, file.icon, dir.relative_root])
                 # write_render(
@@ -120,4 +126,6 @@ class SyncTree(object):
                 #         'root_level': '../../' + dir.relative_level * '../',
                 #     },
                 # )
+            sql.commit()
+            sql.close()
         # write_render('index.html')

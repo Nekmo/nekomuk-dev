@@ -144,13 +144,28 @@ class Path(RenderXML):
         return self.name >= other.name
 
 class Dir(Path):
-    _xml_structure = {'name': 'dir', 'sub': {}}
+    _xml_structure = {
+        'name': 'dir',
+        'sub': {
+            'path_dirs': {
+                'name': 'path_dirs',
+                'sub': {
+                    'name': 'dirname',
+                }
+            }
+        }
+    }
     interfaces = set((
         'name', 'size', 'files', 'dirs', 'root_level', 'quote_name',
-        'human_size', 'human_mean_size', 'mean_size', 'icon', 'mtime'
+        'human_size', 'human_mean_size', 'mean_size', 'icon', 'mtime',
+        'quote_device', 'device_name', 'path_dirs'
     ))
-    _ignore_in_parent =set(('files','dirs', 'root_level'))
+    _ignore_in_parent =set((
+        'files','dirs', 'root_level', 'device_name', 'quote_device',
+        'path_dirs'
+    ))
     last_render = None
+    filetype = 'dir'
 
     def __init__(self, root, relative_root, name, tree):
         self.dirs = []
@@ -176,6 +191,18 @@ class Dir(Path):
     @property
     def human_size(self):
         return render.humanize(self.size)
+
+    @property
+    def quote_device(self):
+        return parse.quote(self.tree.device.quote_name)
+
+    @property
+    def device_name(self):
+        return parse.unquote(self.tree.device.quote_name)
+
+    @property
+    def path_dirs(self):
+        return self.relative_root.split(os.sep)
 
     def __str__(self, level=0):
         body = ' ' * level

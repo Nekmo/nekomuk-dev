@@ -18,7 +18,6 @@ def video_thumb(from_, to, size):
     #     return text
     # from_ = parse_string(from_)
     # to = parse_string(to)
-    print(from_)
     args = [
         ffmpeg_path, '-y', '-ss', str(300 + random.randint(0, 300)),
         '-i', from_, '-f', 'mjpeg', '-vframes', '1', '-s',

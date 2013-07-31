@@ -1,6 +1,7 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import os
+import asyncore
 from lxml import etree
 import shutil
 import logging
@@ -85,7 +86,7 @@ def required(**req_kwargs):
     return fnct
 
 class NekomukCommands(SyncTree):
-    commands = set(['startproject', 'addpath', 'sync'])
+    commands = set(['startproject', 'addpath', 'sync', 'runserver'])
     
     def __init__(self, cfg):
         self.cfg = cfg
@@ -136,6 +137,13 @@ class NekomukCommands(SyncTree):
             elem.attrib['path'] = elem.attrib['path'][1:]
         self.cfg.findall('devices')[0].append(elem)
         self.writecfg()
+
+    @required(max_args=2)
+    def command_runserver(self, args):
+        from . import httpserver
+        httpserver.HTTPServer('0.0.0.0', 3000)
+        asyncore.loop()
+
     
     def writecfg(self):
         with open('config.xml', 'w') as f:

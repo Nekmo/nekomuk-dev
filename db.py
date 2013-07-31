@@ -17,6 +17,7 @@ class SQL(object):
 
     def _connect(self):
         self.conn = sqlite3.connect(self.name)
+        self.conn.text_factory = str
         self.c = self.conn.cursor()
 
     def after_connect(self):

@@ -59,6 +59,8 @@ class Device(RenderXML):
         self.available = True
         self.mount_path = device_data['path']
         self.complete_path = os.path.join(device_data['path'], self.path)
+        if self.complete_path.endswith('/'):
+            self.complete_path = self.complete_path[:-1]
         if not elem.findall('filesfilter'):
             filesfilter = synctree.filesfilter
         else:

@@ -438,10 +438,11 @@ class Tree(Dir):
                 dirobj.append_dir(subdirobj)
             for subfile in subfiles:
                 # Comprobar si el subarchivo debe listarse o no.
-                valid_file = True
                 if filesfilter and not filesfilter.match(root, relative_root, subfile):
                     continue
                 # Se añade el subarchivo al directorio actual
                 relative_subfile = os.path.join(relative_root, subfile)
+                if not os.path.exists(os.path.join(dir_root, subfile)):
+                    continue
                 subfileobj = file_class(root, relative_subfile, subfile, self)
                 dirobj.append_file(subfileobj)

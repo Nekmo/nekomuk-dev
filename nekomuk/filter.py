@@ -1,8 +1,9 @@
+import os
 
 class FilterBase(object):
     def __init__(self, xml):
         self.xml = xml
-        self.action = self.xml.attrib['action'] == 'true'
+        self.action = self.xml.attrib.get('action', 'true') == 'true'
         # path_mode puede ser 'name', 'relative' o 'complete'
         self.path_mode = self.xml.attrib.get('path', 'name')
         self.init()
@@ -43,8 +44,6 @@ class StartswithFilter(FilterBase):
         self._set_xml_choices()
 
     def get_match(self, check_path, root, path, name):
-        if self.use_path:
-            name = os.path.join(path, name)
         for choice in self.choices:
             if check_path.startswith(choice): return True
         return False

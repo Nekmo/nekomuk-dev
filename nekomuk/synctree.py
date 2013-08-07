@@ -197,8 +197,6 @@ class SyncTree(object):
     def make_dirs(self):
         dirs = [
             'devices',
-            's',
-            'stats',
         ]
         for dir in dirs:
             if os.path.exists(dir): continue

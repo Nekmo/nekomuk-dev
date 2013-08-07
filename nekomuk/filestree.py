@@ -397,7 +397,7 @@ class Tree(Dir):
         
         for dir_root, subdirs, subfiles in os.walk(root):
             relative_root = dir_root.replace(root, '', 1)[1:]
-            relative = os.path.dirname(dir_root)
+            relative = os.path.dirname(relative_root)
             dir_root_name = relative_root.split(os.sep)[-1]
             # root -> Dispositivo en que se está analizando (/media/device).
             # dir_root -> Directorio en análisis (/media/device/sub/folder).
@@ -406,9 +406,9 @@ class Tree(Dir):
             # relative -> relative_root sin directorio actual
             # subdirs -> carpetas en el directorio dir_root
             # files -> Archivos en el directorio dir_root
-            valid_dir = True
             # Comprobar si el directorio actual debe analizarse
-            if dirsfilter and not dirsfilter.match(root, relative, dir_root_name):
+            if dirsfilter and not dirsfilter.match(root, relative_root, dir_root_name) \
+                    and relative_root != '':
                 continue
             # Si es un directorio conocido, se usa el objeto para el directorio
             # existente. De lo contrario se crea.
@@ -421,9 +421,8 @@ class Tree(Dir):
                     self._dirobj = dirobj
                     self.dirs = self._dirobj.dirs
                     self.files = self._dirobj.files
-            for subdir in subdirs:
+            for subdir in tuple(subdirs):
                 # Comprobar si el subdirectorio debe listarse o no.
-                valid_dir = True
                 if dirsfilter and not dirsfilter.match(root, relative_root, subdir):
                     subdirs.remove(subdir)
                     continue
@@ -446,3 +445,16 @@ class Tree(Dir):
                     continue
                 subfileobj = file_class(root, relative_subfile, subfile, self)
                 dirobj.append_file(subfileobj)
+            if not subdirs and not dirobj.size:
+                # El directorio no tiene más subdirectorios y está vacío
+                # se borrará este directorio
+                dirobj_to_del = dirobj
+                parent = dirobj_to_del.parent
+                parent.dirs.remove(dirobj_to_del)
+                del self.paths[dirobj_to_del.relative_root]
+        for relative_root, obj in self.paths.items():
+            if not relative_root: continue
+            if obj.size: continue
+            if obj.parent:
+                obj.parent.dirs.remove(obj)
+            del self.paths[relative_root]

@@ -8,7 +8,7 @@ import sys
 from lxml import etree
 import logging
 import argparse
-# sys.path.append(os.sep.join(os.path.abspath(__file__).split(os.sep)[:-2]))
+sys.path.append(os.sep.join(os.path.abspath(__file__).split(os.sep)[:-2]))
 import nekomuk
 
 if __name__ == '__main__':

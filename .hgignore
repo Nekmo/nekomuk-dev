@@ -4,4 +4,7 @@ syntax: glob
 *.pyc
 *~
 *kate-swp
-tests/testdir/*mkv
+nekomuk/tests/testdir/*mkv
+build
+dist
+nekomuk.egg-info

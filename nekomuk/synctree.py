@@ -253,12 +253,12 @@ class SyncTree(object):
         for device in devices:
             if not device.available:
                 log.info(
-                    'El dispositivo %s no se encuentra disponible.' % device.quote_name
+                    'El dispositivo %s no se encuentra disponible.' % device.code_name
                 )
                 continue
             if not device.tree.paths:
                 continue
-            html_device_path = os.path.join('devices', device.code_name)
+            html_device_path = os.path.join('devices', device.quote_name)
             if not os.path.exists(html_device_path):
                 os.makedirs(html_device_path)
             # Se crea la BD CSV

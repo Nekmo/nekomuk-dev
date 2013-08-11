@@ -173,13 +173,23 @@ $(document).ready(function(){
     
     // Mostrar siempre la información de los archivos
     // al hacer scroll
-//     $(window).scroll(function() {
-//         clearTimeout($.data(this, "scrollTimer"));
-//         $.data(this, "scrollTimer", setTimeout(function() {
-//             // do something
-//             console.log("Haven't scrolled in 250ms!");
-//         }, 250));
-//     });
+    $(window).scroll(function() {
+        clearTimeout($.data(this, "scrollTimer"));
+        $.data(this, "scrollTimer", setTimeout(function() {
+            // do something
+            console.log("Haven't scrolled in 80ms!");
+        if(!$('#content').is('.view_list_details')){ return }
+        if($(document).scrollTop() > 50){
+        $('#content .info_column').width($('#content .info_column').width());
+            $('#info_column_background').addClass('fixed');
+        $('#content .info_column').addClass('fixed');
+        } else {
+            $('#content .info_column').css({'width': 'auto'});
+            $('#info_column_background').removeClass('fixed');
+        $('#content .info_column').removeClass('fixed');
+        }
+        }, 80));
+    });
     
     view_list_icons = function(){
         $('#content').removeClass('view_list_details');

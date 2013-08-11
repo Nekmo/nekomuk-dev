@@ -11,6 +11,10 @@ import argparse
 # sys.path.append(os.sep.join(os.path.abspath(__file__).split(os.sep)[:-2]))
 import nekomuk
 
+log_metadata = logging.getLogger('metadata')
+log_metadata.setLevel(logging.CRITICAL)
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--debug', dest='loglevel', action='store_const',
@@ -28,11 +32,11 @@ if __name__ == '__main__':
     args = parser.parse_args()
     logger = logging.getLogger('nekomuk')
     logger.setLevel(args.loglevel)
-    ch = logging.StreamHandler()
-    ch.setLevel(args.loglevel)
-    ch.setFormatter(logging.Formatter('%(levelname)-8s %(message)s'))
-    logger.addHandler(ch)
-    
+    #ch = logging.StreamHandler()
+    #ch.setLevel(args.loglevel)
+    #ch.setFormatter(logging.Formatter('%(levelname)-8s %(message)s'))
+    #logger.addHandler(ch)
+
     if not os.path.exists('config.xml') and not args.mode == 'startproject':
         parser.error(
             'El directorio actual no parece ser un proyecto válido. Abortando.'

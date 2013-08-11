@@ -249,10 +249,25 @@ a:visited {
     margin-bottom: 4px;
 }
 
+#info_column_background.fixed {
+    position: fixed;
+    top: 0px;
+    border-top: 30px #f9f9f9 solid;
+    z-index: 11;
+}
+
 .info_column {
     padding-top: 3px;
     padding-bottom: 3px;
     margin-bottom: 4px;
+}
+
+.info_column.fixed {
+    position: fixed;
+    z-index: 12;
+    top: 30px;
+    width: 80%;
+    min-width: 850px;
 }
 
 .info_column span {
@@ -650,7 +665,7 @@ a:visited {
     bottom: 20px;
     position: fixed;
     padding-top: 60px;
-    z-index: 9;
+    z-index: 13;
 }
 
 #panel .icon {
@@ -682,7 +697,7 @@ a:visited {
     position: fixed;
     top: 20px;
     right: 0;
-    z-index: 10;
+    z-index: 14;
 }
 
 #divExtra02 {
@@ -707,7 +722,7 @@ a:visited {
     height: 50px;
     position: fixed;
     top: 20px;
-    z-index: 10;
+    z-index: 14;
 }
 
 #divExtra04 {

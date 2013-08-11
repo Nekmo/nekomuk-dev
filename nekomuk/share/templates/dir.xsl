@@ -330,6 +330,7 @@
                         <!-- {% endfor %} -->
                         <!-- {% for subfile in dir.files|sort %} -->
                         <xsl:for-each select="files/file">
+                            <xsl:sort select="name" /> 
                             <div class="filediv file">
                                 <img class="icon" alt="[*]" src="{{ root_level }}static/icons/{{ subfile.get_icon() }}">
                                     <xsl:attribute name="src"><xsl:value-of select="$root_level"/>../../static/icons/<xsl:value-of select="icon" /></xsl:attribute>

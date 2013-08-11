@@ -26,6 +26,8 @@ if sys.version_info < (3,0):
 else:
     from urllib import parse
 
+log = logging.getLogger('nekomuk')
+
 class Device(RenderXML):
     _xml_structure = {'name': 'device', 'sub': {
         'plus_quote_name': {'name': 'quote_name', 'sub': {}},
@@ -207,7 +209,8 @@ class Devices(Home):
 
     @property
     def mtime(self):
-        return 0
+        # for 
+        pass
 
 class SyncTree(object):
     def make_dirs(self):
@@ -249,13 +252,13 @@ class SyncTree(object):
             shutil.rmtree(os.path.join('devices', dir_device))
         for device in devices:
             if not device.available:
-                logging.info(
-                    'El dispositivo %s no se encuentra disponible.' % device.name
+                log.info(
+                    'El dispositivo %s no se encuentra disponible.' % device.quote_name
                 )
                 continue
             if not device.tree.paths:
                 continue
-            html_device_path = os.path.join('devices', device.quote_name)
+            html_device_path = os.path.join('devices', device.code_name)
             if not os.path.exists(html_device_path):
                 os.makedirs(html_device_path)
             # Se crea la BD CSV
@@ -280,6 +283,7 @@ class SyncTree(object):
                     csv_file.writerow([file.name, file.icon, dir.relative_root])
             sql.commit()
             device.render(os.path.join('devices', device.quote_name), False, 'about')
+            log.info('Se ha terminado de analizar %s' % device.code_name)
         home = Home(sql)
         home.render('', 'home.xsl')
         Devices(sql, devices).render('devices', 'dir.xsl')

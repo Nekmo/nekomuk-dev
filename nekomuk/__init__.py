@@ -1,6 +1,5 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
-print('44')
 import os
 import asyncore
 from lxml import etree
@@ -150,4 +149,3 @@ class NekomukCommands(SyncTree):
         with open('config.xml', 'w') as f:
             f.write(etree.tostring(self.cfg, pretty_print=True))
 
-        

@@ -1,9 +1,21 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import json
-from . import db
+try:
+    from . import db
+except:
+    import sys
+    import os
+    sys.path.append(os.sep.join(os.path.abspath(__file__).split(os.sep)[:-1]))
+    import db
 
-sql = db.SQL()
+import __main__
+
+if 'sql_file' in dir(__main__):
+    sql_file = __main__.sql_file
+else:
+    sql_file = 'db.sqlite3'
+sql = db.SQL(sql_file)
 
 class Server(object):
     methods = ['search', 'ping']

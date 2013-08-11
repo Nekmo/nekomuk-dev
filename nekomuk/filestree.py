@@ -95,27 +95,29 @@ class RenderXML(object):
 
     def render(self, path, stylesheet, name='index'):
         root = self.build_xml(path=path)
-        if path.endswith(os.sep):
-            path = path[:-1]
-        if not path:
-            stylesheet_path = 'templates/' + stylesheet
-        else:
-            stylesheet_path = os.path.join(
-                '../' * len(path.split(os.sep)),
-                'templates/',
-                 stylesheet
+        if stylesheet != False:
+            if path.endswith(os.sep):
+                path = path[:-1]
+            if not path:
+                stylesheet_path = 'templates/' + stylesheet
+            else:
+                stylesheet_path = os.path.join(
+                    '../' * len(path.split(os.sep)),
+                    'templates/',
+                     stylesheet
+                )
+            pi = etree.PI(
+                'xml-stylesheet type="text/xsl" href="%s"' % stylesheet_path
             )
-        pi = etree.PI(
-            'xml-stylesheet type="text/xsl" href="%s"' % stylesheet_path
-        )
-        root.addprevious(pi)
+            root.addprevious(pi)
         tree = etree.ElementTree(root)
         tree.write(os.path.join(path, name + '.xml'),
             pretty_print=True,
             encoding='UTF-8',
             xml_declaration='1.0'
         )
-        render.write_render(root, os.path.join(path, name + '.html'), stylesheet)        
+        if stylesheet != False:
+            render.write_render(root, os.path.join(path, name + '.html'), stylesheet)
 
 
 class Path(RenderXML):
@@ -339,7 +341,8 @@ class File(Path):
             return '0'
         to = os.path.join(self._render_path, self.name + '.jpg')
         if os.path.exists(to) and not self.parent.last_render is None:
-            xpath = './/file[name/text() = "%s"]' % self.name
+            xpath = './/file[name/text() = "%s"]' % self.name.replace('"', '\\"')
+            xpath = unicode(xpath)
             file = self.parent.last_render.xpath(xpath)[0]
             if int(float(file.find('mtime').text) == int(self.mtime)):
                 return '1'

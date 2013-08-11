@@ -82,7 +82,7 @@ $(document).ready(function(){
   
     IOServer = function(){
         this.resources = [
-            root_level + 'io.py', root_level + 'io.cgi', root_level + 'io.php'
+            root_level + 'nekio.py', root_level + 'nekio.cgi', root_level + 'nekio.php'
         ]
         this.__init__ = function(){
             this.resource = null;
@@ -229,12 +229,14 @@ $(document).ready(function(){
             $('title').text(title);
             // Firefox bug: https://bugzilla.mozilla.org/show_bug.cgi?id=893605
             var href_path = href.split('/').slice(0, -1).join('/') + '/';
-            href_path = $('<div />').html(data);
+            console.debug(href_path);
+            href_path = $('<div />').html(href_path).text();
+            data = $('<div />').html(data);
             $($(data).find('a')).each(function(i, item){
-                $(item).attr('href', href_path + $(item).attr('href'));
+                $(item).attr('href', complete_url($(item).attr('href'), false));
             });
             $($(data).find('img')).each(function(i, item){
-                $(item).attr('src', href_path + $(item).attr('src'));
+                $(item).attr('src', complete_url($(item).attr('src')));
             });
             // data = data.innerHTML;
             var files = $('<div />').html(data).find('#content .files').html();
@@ -257,6 +259,9 @@ $(document).ready(function(){
             }
             last_levels = levels               
             $('#content .files').html(files);
+            $($(data).find('img')).each(function(i, item){
+                $(item).attr('src', complete_url($(item).attr('src')));
+            });
             $('#path').html(path_obj);
             // PATCH - Soluciona el problema de deselección de inputs radio
             // tras Ajax

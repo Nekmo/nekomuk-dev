@@ -281,13 +281,13 @@
                         </div>
                         <div class="filediv dir this_dir hide">
                             <a>
-                                <xsl:attribute name="href">index.xml</xsl:attribute>
+                                <xsl:attribute name="href"><xsl:value-of select="name"/>/index.xml</xsl:attribute>
                                 <img class="icon" alt="[Dir]">
                                     <xsl:attribute name="src"><xsl:value-of select="$root_level" />../../static/icons/<xsl:value-of select="icon" /></xsl:attribute>
                                 </img>
                             </a>
                             <a>
-                                <xsl:attribute name="href"><xsl:value-of select="quote_name"/>/index.xml</xsl:attribute>
+                                <xsl:attribute name="href"><xsl:value-of select="name"/>/index.xml</xsl:attribute>
                                 <xsl:value-of select="name" />
                             </a>
                             <span class="size">
@@ -306,13 +306,13 @@
                             <xsl:sort select="name" /> 
                             <div class="filediv dir">
                                 <a>
-                                    <xsl:attribute name="href"><xsl:value-of select="quote_name"/>/index.xml</xsl:attribute>
+                                    <xsl:attribute name="href"><xsl:choose><xsl:when test="filetype = 'device'"><xsl:value-of select="quote_name"/></xsl:when><xsl:otherwise><xsl:value-of select="name"/></xsl:otherwise></xsl:choose>/index.xml</xsl:attribute>
                                     <img class="icon" alt="[Dir]">
                                         <xsl:attribute name="src"><xsl:value-of select="$root_level" />../../static/icons/<xsl:value-of select="icon" /></xsl:attribute>
                                     </img>
                                 </a>
                                 <a>
-                                    <xsl:attribute name="href"><xsl:value-of select="quote_name"/>/index.xml</xsl:attribute>
+                                    <xsl:attribute name="href"><xsl:choose><xsl:when test="filetype = 'device'"><xsl:value-of select="quote_name"/></xsl:when><xsl:otherwise><xsl:value-of select="name"/></xsl:otherwise></xsl:choose>/index.xml</xsl:attribute>
                                     <xsl:value-of select="name" />
                                 </a>
                                 <span class="size">

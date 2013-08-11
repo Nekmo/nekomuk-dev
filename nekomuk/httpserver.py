@@ -47,7 +47,7 @@ pypaths_exact = [
 SCRIPT_PATH = os.path.abspath(os.path.dirname(__file__))
 
 pypaths_startswith = [
-    ('/io.py', {'method': 'fnct', 'fnct': ioserver.IORequest().get}),
+    ('/nekio.py', {'method': 'fnct', 'fnct': ioserver.IORequest().get}),
     ('', {'method': 'static_dir', 'path': os.getcwd()}),
 ]
 

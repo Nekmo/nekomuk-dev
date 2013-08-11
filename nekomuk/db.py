@@ -56,6 +56,14 @@ class SQL(object):
             return False
         self.c.execute('DELETE FROM file WHERE device = ?', (device,))
 
+    def delete_device(self, device):
+        self.purge_device(device)
+        if not isinstance(device, int):
+            device = self.devices.get(device, None)
+        if device is None:
+            return False
+        self.c.execute('DELETE FROM device WHERE id = ?', (device,))
+
     def add_file(self, registers):
         if not isinstance(registers, (tuple, list)):
             to_execute = [registers]

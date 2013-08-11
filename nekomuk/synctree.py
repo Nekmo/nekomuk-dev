@@ -1,6 +1,7 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import os
+import shutil
 import sys
 import logging
 import mimetypes
@@ -77,26 +78,41 @@ class Device(RenderXML):
             self.complete_path, dirsfilter=dirsfilter, filesfilter=filesfilter,
             device=self
         )
+        about_xml = os.path.join('devices', self.quote_name, 'about.xml')
+        if os.path.exists(about_xml):
+            self.about_root = etree.parse(open(about_xml)).getroot()
+        else:
+            self.about_root = False
 
     @property
     def last_update(self):
-        return time.time()
+        if self.available: return time.time()
+        if not self.about_root: return False
+        return self.about_root.find('last_update').text
 
     @property
     def size(self):
-        return self.tree.paths[''].size
+        if self.available: return self.tree.paths[''].size
+        if not self.about_root: return False
+        return self.about_root.find('size').text
 
     @property
     def human_size(self):
-        return humanize(self.size)
+        if self.available: return humanize(self.size)
+        if not self.about_root: return False
+        return self.about_root.find('human_size').text
 
     @property
     def mean_size(self):
-        return self.tree.paths[''].mean_size
+        if self.available: return self.tree.paths[''].mean_size
+        if not self.about_root: return False
+        return self.about_root.find('mean_size').text
 
     @property
     def human_mean_size(self):
-        return humanize(self.mean_size)
+        if self.available: return humanize(self.mean_size)
+        if not self.about_root: return False
+        return self.about_root.find('human_mean_size').text
 
     @property
     def plus_quote_name(self):
@@ -216,9 +232,21 @@ class SyncTree(object):
             mimetypes.add_type(mimetype.attrib['type'], mimetype.attrib['ext'])
         self.make_dirs()
         devices = []
+        devices_quote_names = []
         sql = db.SQL()
         for device in self.cfg.findall('devices/device'):
-            devices.append(Device(device, self))
+            device_inst = Device(device, self)
+            devices.append(device_inst)
+            devices_quote_names.append(device_inst.quote_name)
+        # Limpiar la BD de devices que ya no se encuentren en la configuración
+        for sql_device in sql.devices.keys():
+            if sql_device in devices_quote_names: continue
+            sql.delete_device(sql_device)
+        # Borrar los directorios 
+        for dir_device in os.listdir('devices'):
+            if dir_device in devices_quote_names: continue
+            if not os.path.isdir(dir_device): continue
+            shutil.rmtree(os.path.join('devices', dir_device))
         for device in devices:
             if not device.available:
                 logging.info(
@@ -235,6 +263,7 @@ class SyncTree(object):
             csv_file = csv.writer(csv_file)
             # Se purga la BD SQL para evitar entradas repetidas
             sql.purge_device(device.quote_name)
+            sql.commit()
             for dir in reversed(sorted(device.tree.paths.values())):
                 project_dir = os.path.join(html_device_path, dir.relative_root)
                 if not os.path.exists(project_dir):
@@ -249,18 +278,9 @@ class SyncTree(object):
                 sql.add_file(dir.files)
                 for file in dir.files:
                     csv_file.writerow([file.name, file.icon, dir.relative_root])
-                # write_render(
-                #     os.path.join(project_dir, 'index.html'), 
-                #     'dir_device.html',
-                #     {
-                #         'dir': dir,
-                #         'device': device,
-                #         'root_level': '../../' + dir.relative_level * '../',
-                #     },
-                # )
             sql.commit()
+            device.render(os.path.join('devices', device.quote_name), False, 'about')
         home = Home(sql)
         home.render('', 'home.xsl')
         Devices(sql, devices).render('devices', 'dir.xsl')
         sql.close()
-        # write_render('index.html')

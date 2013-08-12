@@ -175,18 +175,16 @@ $(document).ready(function(){
     // al hacer scroll
     $(window).scroll(function() {
         clearTimeout($.data(this, "scrollTimer"));
-        $.data(this, "scrollTimer", setTimeout(function() {
-            // do something
-            console.log("Haven't scrolled in 80ms!");
-        if(!$('#content').is('.view_list_details')){ return }
-        if($(document).scrollTop() > 50){
-        $('#content .info_column').width($('#content .info_column').width());
-            $('#info_column_background').addClass('fixed');
-        $('#content .info_column').addClass('fixed');
-        } else {
-            $('#content .info_column').css({'width': 'auto'});
-            $('#info_column_background').removeClass('fixed');
-        $('#content .info_column').removeClass('fixed');
+            $.data(this, "scrollTimer", setTimeout(function() {
+            if(!$('#content').is('.view_list_details')){ return }
+            if($(document).scrollTop() > 50){
+            $('#content .info_column').width($('#content .info_column').width());
+                $('#info_column_background').addClass('fixed');
+            $('#content .info_column').addClass('fixed');
+            } else {
+                $('#content .info_column').css({'width': 'auto'});
+                $('#info_column_background').removeClass('fixed');
+            $('#content .info_column').removeClass('fixed');
         }
         }, 80));
     });
@@ -239,7 +237,6 @@ $(document).ready(function(){
             $('title').text(title);
             // Firefox bug: https://bugzilla.mozilla.org/show_bug.cgi?id=893605
             var href_path = href.split('/').slice(0, -1).join('/') + '/';
-            console.debug(href_path);
             href_path = $('<div />').html(href_path).text();
             data = $('<div />').html(data);
             $($(data).find('a')).each(function(i, item){
@@ -317,6 +314,7 @@ $(document).ready(function(){
             // ajax fetch the data
             if($('#results').is('.hide')){
                 $('#panel').animate({right: '-16%'}, 500);
+                $('#divExtra01').hide();
                 $('#content').fadeOut(300);
                 setTimeout(function(){
                     $('#results').fadeIn(300);
@@ -397,6 +395,7 @@ $(document).ready(function(){
             return
         }
         $('#panel').animate({right: '0px'}, 500);
+        $('#divExtra01').show();
         $('#results').fadeOut(300);
         setTimeout(function(){
             $('#content').fadeIn(300);

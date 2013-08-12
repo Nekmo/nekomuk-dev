@@ -168,7 +168,7 @@
                                 Navegue por sus unidades de almacenamiento en cualquier momento y en cualquier lugar aunque estas no se encuentren disponibles. Obtenga detalles sobre sus archivos como tamaño, fecha de modificación, tipo, códecs, una previsualización o su suma de comprobación (MD5, SHA1, CRC32...).
                             </span>
                             <xsl:for-each select="devices/device">
-                                <xsl:sort select="quote_name" /> 
+                                <xsl:sort select="name" /> 
                                 <div class="device">
                                     <a class="name">
                                         <xsl:attribute name="href">devices/<xsl:value-of select="name_quote"/>/index.xml</xsl:attribute>

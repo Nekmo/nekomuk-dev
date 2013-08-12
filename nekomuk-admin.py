@@ -8,6 +8,7 @@ import sys
 from lxml import etree
 import logging
 import argparse
+import shutil
 # sys.path.append(os.sep.join(os.path.abspath(__file__).split(os.sep)[:-2]))
 import nekomuk
 
@@ -26,6 +27,8 @@ if __name__ == '__main__':
     parser.add_argument('--error', dest='loglevel', action='store_const',
                         const=logging.ERROR, default=logging.INFO,
                         help='Establecer el nivel a solo errores del programa.')
+    parser.add_argument('--force-overwrite', dest='force_overwrite', action='store_true',
+                        help='Sobrescribir los archivos por defecto.')
     parser.add_argument('mode', choices=nekomuk.NekomukCommands.commands,
                         help='Modo de uso')
     parser.add_argument('extra_args', nargs='*')
@@ -45,6 +48,19 @@ if __name__ == '__main__':
         root = None
     else:
         root = etree.parse('config.xml').getroot()
+
+    if args.force_overwrite:
+        sharedir = os.path.join(nekomuk.NEKOMUK_DIR, 'share')
+        for fileordir in os.listdir(sharedir):
+            path = os.path.join(sharedir, fileordir)
+            if os.path.isdir(path):
+                if os.path.exists(fileordir):
+                    shutil.rmtree(fileordir)
+                shutil.copytree(path, fileordir)
+            else:
+                if os.path.exists(fileordir):
+                    os.remove(fileordir)
+                shutil.copy2(path, fileordir)
     nekomukcommands = nekomuk.NekomukCommands(root)
     nekomukcommands.log_error = parser.error
     nekomukcommands.execute(args.mode, args.extra_args)

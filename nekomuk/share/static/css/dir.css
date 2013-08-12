@@ -106,6 +106,7 @@ a:visited {
     width: auto;
     margin-right: 200px;
     padding-right: 4px;
+    min-width: 160px;
 }
 
 #path .device:hover .divExtra {
@@ -397,6 +398,7 @@ a:visited {
 
 #results {
     margin-left: 20px;
+    margin-bottom: 100px;
 }
 
 #results .info_column .device {
@@ -470,6 +472,7 @@ a:visited {
     overflow: visible;
     width: auto;
     margin-right: 200px;
+    min-width: 200px;
 }
 
 #results .device span {

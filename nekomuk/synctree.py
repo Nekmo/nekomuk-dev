@@ -68,13 +68,13 @@ class Device(RenderXML):
             filesfilter = synctree.filesfilter
         else:
             filesfilter = filter.Filters(
-                elem.findall('filesfilter'), synctree=synctree, device=self
+                elem.findall('filesfilter/*'), synctree=synctree, device=self
             )
         if not elem.findall('dirsfilter'):
             dirsfilter = synctree.dirsfilter
         else:
             dirsfilter = filter.Filters(
-                elem.findall('dirsfilter'), synctree=synctree, device=self
+                elem.findall('dirsfilter/*'), synctree=synctree, device=self
             )
         self.tree = Tree(
             self.complete_path, dirsfilter=dirsfilter, filesfilter=filesfilter,

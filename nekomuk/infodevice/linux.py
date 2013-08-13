@@ -13,7 +13,7 @@ class InfoDevice(object):
         for line in lines:
             data = re.findall(pattern, line)[0]
             devices[data[0]] = data[1]
-        pattern = r"^([^:]+): (LABEL=\"(.+)\" |)UUID=\"([^ ]+)\".+"
+        pattern = r"^([^:]+): (?:SEC_TYPE=\".+\" |)(LABEL=\"(.+)\" |)UUID=\"([^ ]+)\".+"
         lines = os.popen('blkid').readlines()
         for line in lines:
             data = re.findall(pattern, line)[0]

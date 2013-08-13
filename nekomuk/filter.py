@@ -1,4 +1,7 @@
 import os
+import re
+from fnmatch import fnmatch
+from lxml import etree
 
 class FilterBase(object):
     def __init__(self, xml):
@@ -45,7 +48,8 @@ class StartswithFilter(FilterBase):
 
     def get_match(self, check_path, root, path, name):
         for choice in self.choices:
-            if check_path.startswith(choice): return True
+            if check_path.startswith(choice):
+                return True
         return False
 
 class EqualFilter(FilterBase):
@@ -55,10 +59,26 @@ class EqualFilter(FilterBase):
     def get_match(self, check_path, root, path, name):
         return check_path in self.choices
 
+class RegexFilter(FilterBase):
+    def init(self):
+        self.match_filter = self.xml.text
+
+    def get_match(self, check_path, root, path, name):
+        return bool(re.findall(self.match_filter, check_path))
+
+class FnmatchFilter(FilterBase):
+    def init(self):
+        self.match_filter = self.xml.text
+
+    def get_match(self, check_path, root, path, name):
+        return fnmatch(check_path, self.match_filter)
+
 filters = {
     'endswith': EndswithFilter,
     'startswith': StartswithFilter,
     'equal': EqualFilter,
+    'regex': RegexFilter,
+    'fnmatch': FnmatchFilter,
 }
 
 class GroupFilter(object):
@@ -72,9 +92,9 @@ class GroupFilter(object):
                 self.childrens.append(GroupFilter(children))
             elif children.tag == 'globalfilters':
                 if children.attrib['type'] == 'dirs':
-                    self.children.append(kwargs['synctree'].dirsfilter)
+                    self.childrens.append(kwargs['synctree'].dirsfilter)
                 elif children.attrib['type'] == 'files':
-                    self.children.append(kwargs['synctree'].filesfilter)
+                    self.childrens.append(kwargs['synctree'].filesfilter)
 
 
     def match(self, root, path, name):
@@ -98,11 +118,17 @@ class Filters(object):
     def __init__(self, xml, **kwargs):
         if not xml:
             return
-        xml = xml[0]
-        if xml.tag == 'filter':
-            self.filter = filters[xml.attrib['type']](xml)
-        elif xml.tag == 'group':
-            self.filter = GroupFilter(xml, **kwargs)
+        if len(xml) > 1:
+            self.filter = etree.Element('groupfilter')
+            self.filter.attrib['action'] = 'or'
+            for subelement in xml:
+                self.filter.append(subelement)
+        else:
+            xml = xml[0]
+            if xml.tag == 'filter':
+                self.filter = filters[xml.attrib['type']](xml)
+            elif xml.tag == 'group':
+                self.filter = GroupFilter(xml, **kwargs)
 
     def match(self, root, path, name):
         if not self.filter:

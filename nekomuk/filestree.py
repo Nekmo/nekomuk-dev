@@ -448,16 +448,18 @@ class Tree(Dir):
                     continue
                 subfileobj = file_class(root, relative_subfile, subfile, self)
                 dirobj.append_file(subfileobj)
-            if not subdirs and not dirobj.size:
+            if not subdirs and not dirobj.size and not dirobj.files and relative_root:
                 # El directorio no tiene más subdirectorios y está vacío
                 # se borrará este directorio
                 dirobj_to_del = dirobj
                 parent = dirobj_to_del.parent
-                parent.dirs.remove(dirobj_to_del)
+                print('>' + str(dirobj_to_del.relative_root))
+                if parent:
+                    parent.dirs.remove(dirobj_to_del)
                 del self.paths[dirobj_to_del.relative_root]
         for relative_root, obj in self.paths.items():
             if not relative_root: continue
-            if obj.size: continue
+            if obj.size or obj.files or obj.dirs: continue
             if obj.parent:
                 obj.parent.dirs.remove(obj)
             del self.paths[relative_root]

@@ -90,9 +90,10 @@ $(document).ready(function(){
                 is_available = false;
                 resource = this.resources[i];
                 $.ajax(resource + '?method=ping', {
-                    async: false
+                    async: false,
+                    mimeType: 'text'
                 }).done(function(data){
-                    if(data != 'PONG'){ return }
+                    if(!data.startswith('PONG')){ return }
                     is_available = true;
                 });
                 if(is_available){
@@ -180,11 +181,11 @@ $(document).ready(function(){
             if($(document).scrollTop() > 50){
             $('#content .info_column').width($('#content .info_column').width());
                 $('#info_column_background').addClass('fixed');
-            $('#content .info_column').addClass('fixed');
+            $('.info_column').addClass('fixed');
             } else {
                 $('#content .info_column').css({'width': 'auto'});
                 $('#info_column_background').removeClass('fixed');
-            $('#content .info_column').removeClass('fixed');
+            $('.info_column').removeClass('fixed');
         }
         }, 80));
     });

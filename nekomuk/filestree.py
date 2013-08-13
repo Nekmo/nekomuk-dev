@@ -197,7 +197,7 @@ class Dir(Path, get_icon.GetIcon):
         self.root_level = '../' * self.relative_level
         
     def append_dir(self, subdirobj):
-        self._dirs_names
+        self._dirs_names.append(subdirobj.name)
         self.dirs.append(subdirobj)
     
     def append_file(self, subfileobj):

@@ -56,6 +56,13 @@ class Device(RenderXML):
         self.path = elem.attrib['path']
         self.code_name = self.code_name % (self.name, self.path)
         self.quote_name = parse.quote_plus(self.code_name)
+        # Si existía de antes el about.xml, se lee
+        about_xml = os.path.join('devices', self.quote_name, 'about.xml')
+        if os.path.exists(about_xml):
+            self.about_root = etree.parse(open(about_xml)).getroot()
+        else:
+            self.about_root = False
+        # Si el dispositivo no está disponible, no se continúa.
         if not device_data:
             self.available = False
             return
@@ -80,11 +87,6 @@ class Device(RenderXML):
             self.complete_path, dirsfilter=dirsfilter, filesfilter=filesfilter,
             device=self
         )
-        about_xml = os.path.join('devices', self.quote_name, 'about.xml')
-        if os.path.exists(about_xml):
-            self.about_root = etree.parse(open(about_xml)).getroot()
-        else:
-            self.about_root = False
 
     @property
     def last_update(self):

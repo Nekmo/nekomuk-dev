@@ -453,7 +453,6 @@ class Tree(Dir):
                 # se borrará este directorio
                 dirobj_to_del = dirobj
                 parent = dirobj_to_del.parent
-                print('>' + str(dirobj_to_del.relative_root))
                 if parent:
                     parent.dirs.remove(dirobj_to_del)
                 del self.paths[dirobj_to_del.relative_root]

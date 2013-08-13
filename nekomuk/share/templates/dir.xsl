@@ -7,6 +7,7 @@
         doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN" indent="yes"/>
     <xsl:template match="/dir">
         <xsl:variable name="root_level" select="root_level"/>
+        <xsl:variable name="root_path"><xsl:choose><xsl:when test="device_name">../../<xsl:value-of select="$root_level" /></xsl:when><xsl:otherwise><xsl:value-of select="root_level" /></xsl:otherwise></xsl:choose></xsl:variable>
         <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="es-ES" dir="ltr" lang="es-ES"> 
             <head profile="http://gmpg.org/xfn/11"> 
                 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> 
@@ -23,58 +24,58 @@
                 </script>
                 <script type="text/javascript">
                     <xsl:attribute name="src">
-                        <xsl:value-of select="$root_level"/>../../static/js/jquery.min.js
+                        <xsl:value-of select="$root_path"/>static/js/jquery.min.js
                     </xsl:attribute>
                 </script>
                 <script type="text/javascript">
                     <xsl:attribute name="src">
-                        <xsl:value-of select="$root_level"/>../../static/js/jquery.history.js
+                        <xsl:value-of select="$root_path"/>static/js/jquery.history.js
                     </xsl:attribute>
                 </script>
                 <script type="text/javascript">
                     <xsl:attribute name="src">
-                        <xsl:value-of select="$root_level"/>../../static/js/jquery.hoverIntent.js
+                        <xsl:value-of select="$root_path"/>static/js/jquery.hoverIntent.js
                     </xsl:attribute>
                 </script>
                 <script type="text/javascript">
                     <xsl:attribute name="src">
-                        <xsl:value-of select="$root_level"/>../../static/js/jquery.cookie.js
+                        <xsl:value-of select="$root_path"/>static/js/jquery.cookie.js
                     </xsl:attribute>
                 </script>
                 <script type="text/javascript">
                     <xsl:attribute name="src">
-                        <xsl:value-of select="$root_level"/>../../static/js/jquery.slideto.js
+                        <xsl:value-of select="$root_path"/>static/js/jquery.slideto.js
                     </xsl:attribute>
                 </script>
                 <script type="text/javascript">
                     <xsl:attribute name="src">
-                        <xsl:value-of select="$root_level"/>../../static/js/jquery.hipster-titles.js
+                        <xsl:value-of select="$root_path"/>static/js/jquery.hipster-titles.js
                     </xsl:attribute>
                 </script>
                 <script type="text/javascript">
                     <xsl:attribute name="src">
-                        <xsl:value-of select="$root_level"/>../../static/js/moment.min.js
+                        <xsl:value-of select="$root_path"/>static/js/moment.min.js
                     </xsl:attribute>
                 </script>
                 <script type="text/javascript">
                     <xsl:attribute name="src">
-                        <xsl:value-of select="$root_level"/>../../static/js/moment.es.js
+                        <xsl:value-of select="$root_path"/>static/js/moment.es.js
                     </xsl:attribute>
                 </script>
                 <script type="text/javascript">
                     <xsl:attribute name="src">
-                        <xsl:value-of select="$root_level"/>../../static/js/dir.js
+                        <xsl:value-of select="$root_path"/>static/js/dir.js
                     </xsl:attribute>
                 </script>
                 <!--Escrito con Kate en entorno KDE4 bajo un sistema GNU/Linux (Distribución Archlinux) --> 
                 <link type="text/css" rel="stylesheet"> 
                     <xsl:attribute name="href">
-                        <xsl:value-of select="$root_level"/>../../static/css/dir.css
+                        <xsl:value-of select="$root_path"/>static/css/dir.css
                     </xsl:attribute>
                 </link>
                 <link type="text/css" rel="stylesheet"> 
                     <xsl:attribute name="href">
-                        <xsl:value-of select="$root_level"/>../../static/css/jquery.hipster-titles.css
+                        <xsl:value-of select="$root_path"/>static/css/jquery.hipster-titles.css
                     </xsl:attribute>
                 </link>
             </head> 
@@ -268,7 +269,7 @@
                         <div class="filediv dir up">
                             <a href="../index.xml">
                                 <img class="icon" alt="[Up]">
-                                    <xsl:attribute name="src"><xsl:value-of select="$root_level"/>../../static/icons/go_up.svg</xsl:attribute>
+                                    <xsl:attribute name="src"><xsl:value-of select="$root_path"/>static/icons/go_up.svg</xsl:attribute>
                                 </img>
                             </a>
                             <a href="../index.xml">Directorio superior</a>
@@ -332,8 +333,8 @@
                         <xsl:for-each select="files/file">
                             <xsl:sort select="name" /> 
                             <div class="filediv file">
-                                <img class="icon" alt="[*]" src="{{ root_level }}static/icons/{{ subfile.get_icon() }}">
-                                    <xsl:attribute name="src"><xsl:value-of select="$root_level"/>../../static/icons/<xsl:value-of select="icon" /></xsl:attribute>
+                                <img class="icon" alt="[*]">
+                                    <xsl:attribute name="src"><xsl:value-of select="$root_path"/>static/icons/<xsl:value-of select="icon" /></xsl:attribute>
                                 </img>
                                 <span class="name">
                                     <xsl:value-of select="name" />

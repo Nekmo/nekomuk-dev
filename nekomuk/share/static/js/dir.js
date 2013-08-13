@@ -402,6 +402,7 @@ $(document).ready(function(){
         }, 300);
         setTimeout(function(){
             if($('#results').is(':visible')){
+                $('#divExtra01').hide();
                 $('#results').hide();
             }
         }, 600);

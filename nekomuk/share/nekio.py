@@ -2,12 +2,12 @@
 print("Content-Type: application/json")
 print('')
 import cgi
+import os
 
 try:
     from nekomuk import ioserver
 except ImportError:
     import sys
-    import os
     sys.path.append(os.sep.join(os.path.abspath(__file__).split(os.sep)[:-2]))
     # for key, value in os.environ.items(): print '%s => %s' % (key, value)
     sql_file = os.environ.get('NEKOMUK_SQLITE', 'db.sqlite3')

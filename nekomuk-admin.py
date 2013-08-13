@@ -58,6 +58,7 @@ if __name__ == '__main__':
                     shutil.rmtree(fileordir)
                 shutil.copytree(path, fileordir)
             else:
+                if fileordir == 'config.xml': continue
                 if os.path.exists(fileordir):
                     os.remove(fileordir)
                 shutil.copy2(path, fileordir)
